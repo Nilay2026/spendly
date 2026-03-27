@@ -1,6 +1,83 @@
 /* ------------------------------------------------------------------ */
-/* Hero mockup — landing page only                                     */
+/* Hero mockup & modal — landing page only                            */
 /* ------------------------------------------------------------------ */
+
+/* "See how it works" button */
+.btn-watch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    color: var(--ink-soft);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+}
+
+.btn-watch:hover { color: var(--accent); }
+
+/* Modal overlay */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.modal-overlay.is-open { display: flex; }
+
+/* Modal box */
+.modal-box {
+    position: relative;
+    background: var(--ink);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 760px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+/* Close button */
+.modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.modal-close:hover { opacity: 1; }
+
+/* 16:9 iframe wrapper */
+.modal-video-wrap {
+    position: relative;
+    padding-top: 56.25%;
+}
+
+.modal-video-wrap iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
 
 .lp-mockup {
     display: grid;
