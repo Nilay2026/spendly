@@ -38,7 +38,6 @@ def init_db():
 
 
 def find_user_by_email(email):
-    """Find a user by email. Used during registration to check duplicates."""
     conn = get_db()
     user = conn.execute(
         "SELECT * FROM users WHERE email = ?", (email,)
@@ -48,7 +47,6 @@ def find_user_by_email(email):
 
 
 def create_user(name, email, password):
-    """Create a new user with hashed password. Used during registration."""
     conn = get_db()
     conn.execute(
         "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
@@ -56,43 +54,7 @@ def create_user(name, email, password):
     )
     conn.commit()
     conn.close()
-
-
-def verify_user_login(email, password):
-    """
-    Verify user credentials for login.
-    
-    Args:
-        email (str): User's email address
-        password (str): Plain text password to verify
-    
-    Returns:
-        dict-like object (sqlite3.Row) with user data if credentials valid
-        None if email not found or password incorrect
-    """
-    conn = get_db()
-    user = conn.execute(
-        "SELECT * FROM users WHERE email = ?", (email,)
-    ).fetchone()
-    conn.close()
-    
-    if user is None:
-        # Email not found
-        return None
-    
-    # Verify password against stored hash
-    if check_password_hash(user['password_hash'], password):
-        return user
-    else:
-        # Password incorrect
-        return None
-
-
 def seed_db():
-    """
-    Seed the database with demo user and sample expenses.
-    Idempotent — safe to call multiple times.
-    """
     conn = get_db()
 
     existing = conn.execute(
