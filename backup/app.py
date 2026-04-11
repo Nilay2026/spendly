@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, session, url_for
-from database.db import get_db, init_db, seed_db, find_user_by_email, create_user, verify_user_login
+from flask import Flask, render_template, request, redirect
+from database.db import get_db, init_db, seed_db, find_user_by_email, create_user
 
 app = Flask(__name__)
 app.secret_key = "spendly-dev-secret"
@@ -36,61 +36,9 @@ def register():
     return redirect("/login")
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/login")
 def login():
-    """
-    Login route — handles both GET (show form) and POST (process login).
-    
-    GET: Display login form
-    POST: Validate credentials and create session
-    """
-    if request.method == "GET":
-        return render_template("login.html")
-    
-    # POST: Handle form submission
-    email = request.form.get("email", "").strip()
-    password = request.form.get("password", "")
-    
-    # Validate inputs
-    if not email or not password:
-        return render_template("login.html", error="Email and password are required.")
-    
-    # Verify credentials
-    user = verify_user_login(email, password)
-    
-    if not user:
-        # Generic error message — don't reveal if email exists or not
-        return render_template("login.html", error="Invalid email or password.")
-    
-    # Create session
-    session['user_id'] = user['id']
-    session['user_name'] = user['name']
-    session['user_email'] = user['email']
-    
-    # Redirect to dashboard
-    return redirect(url_for('dashboard'))
-
-
-@app.route("/logout")
-def logout():
-    """
-    Logout route — clear session and redirect to landing page.
-    """
-    session.clear()
-    return redirect(url_for('landing'))
-
-
-@app.route("/dashboard")
-def dashboard():
-    """
-    Dashboard route — displays user's expense summary.
-    Protected: redirects to login if user not authenticated.
-    """
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    user_name = session.get('user_name', 'User')
-    return render_template("dashboard.html", user_name=user_name)
+    return render_template("login.html")
 
 
 @app.route("/terms")
@@ -106,6 +54,11 @@ def privacy():
 # ------------------------------------------------------------------ #
 # Placeholder routes — students will implement these                  #
 # ------------------------------------------------------------------ #
+
+@app.route("/logout")
+def logout():
+    return "Logout — coming in Step 3"
+
 
 @app.route("/profile")
 def profile():
