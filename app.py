@@ -1,5 +1,8 @@
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, session, url_for
-from database.db import get_db, init_db, seed_db, find_user_by_email, create_user, verify_user_login
+from database.db import (get_db, init_db, seed_db, find_user_by_email,
+                          create_user, verify_user_login,
+                          get_user_by_id, get_expenses_by_user_and_date_range)
 
 app = Flask(__name__)
 app.secret_key = "spendly-dev-secret"
@@ -109,7 +112,45 @@ def privacy():
 
 @app.route("/profile")
 def profile():
-    return "Profile page — coming in Step 4"
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user = get_user_by_id(session['user_id'])
+
+    from_date = request.args.get('from_date', '').strip()
+    to_date   = request.args.get('to_date', '').strip()
+
+    expenses     = []
+    total_amount = 0.0
+    error        = None
+    filtered     = False
+
+    if from_date or to_date:
+        if not from_date or not to_date:
+            error = "Both From and To dates are required."
+        else:
+            try:
+                d_from = datetime.strptime(from_date, "%Y-%m-%d")
+                d_to   = datetime.strptime(to_date,   "%Y-%m-%d")
+                if d_from > d_to:
+                    error = "From date must not be after To date."
+                else:
+                    expenses     = get_expenses_by_user_and_date_range(
+                                       session['user_id'], from_date, to_date)
+                    total_amount = sum(e['amount'] for e in expenses)
+                    filtered     = True
+            except ValueError:
+                error = "Invalid date format. Use YYYY-MM-DD."
+
+    return render_template("profile.html",
+        user=user,
+        expenses=expenses,
+        total_amount=total_amount,
+        from_date=from_date,
+        to_date=to_date,
+        filtered=filtered,
+        error=error,
+    )
 
 
 @app.route("/expenses/add")

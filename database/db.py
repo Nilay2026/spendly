@@ -88,6 +88,27 @@ def verify_user_login(email, password):
         return None
 
 
+def get_user_by_id(user_id):
+    conn = get_db()
+    user = conn.execute(
+        "SELECT * FROM users WHERE id = ?", (user_id,)
+    ).fetchone()
+    conn.close()
+    return user
+
+
+def get_expenses_by_user_and_date_range(user_id, from_date, to_date):
+    conn = get_db()
+    rows = conn.execute(
+        """SELECT * FROM expenses
+           WHERE user_id = ? AND date >= ? AND date <= ?
+           ORDER BY date DESC""",
+        (user_id, from_date, to_date),
+    ).fetchall()
+    conn.close()
+    return rows
+
+
 def seed_db():
     """
     Seed the database with demo user and sample expenses.
